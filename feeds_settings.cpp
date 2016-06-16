@@ -87,6 +87,7 @@ void get_feed_name()
 
 feeds_settings::feeds_settings(QWidget *parent) : QDialog(parent), ui(new Ui::feeds_settings)
 {
+    sett = DFRSSFilter(parent).sett;
     lineEdit = new QLineEdit(this);
     lineEdit->setPlaceholderText("Введите адрес ленты...");
 

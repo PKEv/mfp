@@ -7,18 +7,10 @@
 #include <QString>
 
 #include "filter.h"
-#include "settings.h"
+
 #include "feeds_settings.h"
 
-bool need_a_name; // для проверки необходимости обновления имени окна
-bool win_max; // переменная для хранения размеров окна
-//QString feed_name;
-int request_period = 5*60*1000; // запрос новостей раз в 5 минут
-int show_period = 30*1000; // уведомление в трее будет висеть 30 секунд
-int counter = 0;
-settings *sett;
-bool have_news; // переменная для вывода уведомления о наличии новостей
-int num_of_results; // переменная для подсчёта интересующих новостей в ленте
+
 
 // обработчик событий
 bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
@@ -90,7 +82,7 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 {
     read_filters(); // считываем фильтры
     read_feeds(); // считываем ленты
-    sett = new settings;
+    sett = new settings();
     sett->read_settings();
     win_max = false; // окно не развёрнуто
 
@@ -178,6 +170,25 @@ DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
     this->setWindowIcon(QIcon(":/trell.ico"));
 }
 
+DFRSSFilter::~DFRSSFilter()
+{
+    delete sett;
+
+    delete currentReply;
+
+    delete treeWidget;
+    delete fetchButton;
+    delete hint;
+    delete trayIconMenu,
+    delete main_menu;
+    delete mainmenubar;
+    delete trayIcon;
+    delete menu_settings,
+    delete menu_feeds;
+    delete menu_filters;
+    delete menu_quit;
+    delete tray_quit;
+}
 
 // Начинает сетевой запрос и соединяет необходимые сигналы
 void DFRSSFilter::get(const QUrl &url)
@@ -285,19 +296,22 @@ void DFRSSFilter::finished(QNetworkReply *reply)
         hint->setText("Двойной клик по новости откроет её в браузере");
         fetchButton->setEnabled(true);
     }
+    if (feed_item->childCount() > 0)
+        treeWidget->addTopLevelItem(feed_item);
+
     /*
     if (num_of_results == 0)
         delete treeWidget->takeTopLevelItem(treeWidget->topLevelItemCount() - 1);
         */
 }
 
-// Парсит данные XML и создаёт соответственно элементы treeWidget.
+// Парсит данные XML и создаёт соответственно элементы (:|;).
 void DFRSSFilter::parseXml()
 {
     QString str;
     int num_of_active_filters = 0;
 
-    QTreeWidgetItem *feed_item = new QTreeWidgetItem;
+    feed_item = new QTreeWidgetItem;
 
     while (!xml.atEnd())
     {
@@ -387,7 +401,7 @@ void DFRSSFilter::parseXml()
                     QTextDocument doc;
                     doc.setHtml(titleString);
                     feed_item->setText(0, doc.toPlainText());
-                    treeWidget->addTopLevelItem(feed_item);
+                    //treeWidget->addTopLevelItem(feed_item);
                     //setWindowTitle(titleString);
                     need_a_name = false;
                 }
@@ -443,7 +457,7 @@ void DFRSSFilter::edit_settings()
 // открытие окна работы с лентами
 void DFRSSFilter::edit_feeds()
 {
-    feeds_settings *f_sett = new feeds_settings;
+    feeds_settings *f_sett = new feeds_settings(this);
     f_sett->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает

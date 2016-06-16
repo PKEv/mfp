@@ -14,6 +14,7 @@
 #include <QTreeWidgetItem> // для вывода списка фильтров
 #include <QTreeWidgetItemIterator>
 #include <QStatusBar>
+#include "settings.h"
 
 struct filters_struct
 {
@@ -52,6 +53,7 @@ private:
     QLineEdit *lineEdit;
     QLabel *filter_hint, *choice_hint;
     QTreeWidget *filers_list;
+    settings * sett;
 
 private slots:
     void closeEvent(QCloseEvent *);

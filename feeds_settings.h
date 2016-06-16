@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QStatusBar>
+#include "dfrssfilter.h"
 
 struct feeds_struct
 {
@@ -41,6 +42,7 @@ private:
     QLineEdit *lineEdit;
     QLabel *feed_hint, *choice_hint;
     QListWidget *feeds_list;
+    settings * sett;
 
 private slots:
     void closeEvent(QCloseEvent *);

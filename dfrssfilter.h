@@ -12,8 +12,13 @@
 #include <QMenuBar>
 #include <QSignalMapper>
 #include <QSystemTrayIcon>
-#include "settings.h"
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QPushButton>
 
+#include "settings.h"
+#include "filter.h"
+#include "feeds_settings.h"
 
 extern QString prog_name_ver;
 
@@ -23,9 +28,8 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class QPushButton;
 */
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QPushButton>
+
+
 
 class DFRSSFilter : public QWidget
 {
@@ -34,6 +38,7 @@ public:
     DFRSSFilter(QWidget *widget = 0);
     ~DFRSSFilter();
     settings *sett = nullptr;
+
 
 public slots:
     void fetch();
@@ -70,6 +75,8 @@ private:
     void get(const QUrl &url);
     QTreeWidgetItem *feed_item;
 
+    //Filter *new_filter = nullptr;
+    //feeds_settings *f_sett = nullptr;
 
     QXmlStreamReader xml;
     QString currentTag;

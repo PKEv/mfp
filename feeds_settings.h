@@ -6,7 +6,9 @@
 #include <QLabel>
 #include <QListWidget>
 #include <QStatusBar>
+
 #include "dfrssfilter.h"
+#include "settings.h"
 
 struct feeds_struct
 {
@@ -29,6 +31,11 @@ class feeds_settings : public QDialog
 public:
     explicit feeds_settings(QWidget *parent = 0);
     ~feeds_settings();
+    void show_feeds(QListWidget *listwidget, QList<feeds_struct> values);
+    void read_feeds();
+    void write_feeds();
+    void save_checked(QListWidget *listwidget);
+    void get_feed_name();
 
 public slots:
     void add_feed();

@@ -3,17 +3,18 @@
 
 #include <QDialog>
 #include <QLineEdit>
-#include <QHBoxLayout>
-#include <QPushButton>
+
 #include <QFile>        // для работы с файлами
 #include <QTextStream>
 #include <QStringList>
 #include <QLabel>
+
 #include <QTimer>
 #include <QTextDocument>
 #include <QTreeWidgetItem> // для вывода списка фильтров
-#include <QTreeWidgetItemIterator>
 #include <QStatusBar>
+
+#include "dfrssfilter.h"
 #include "settings.h"
 
 struct filters_struct
@@ -25,21 +26,23 @@ struct filters_struct
 
 extern QList<filters_struct> filters;
 
-void read_filters();     // чтение фильтров из файла
-void write_filters();    // запись фильтров в файл
-
 
 namespace Ui {
 class filter;
 }
 
-class filter : public QDialog
+class Filter : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit filter(QDialog *parent = 0);
-    ~filter();
+    explicit Filter(QWidget *parent = 0);
+    ~Filter();
+    QString encodeEntities(const QString& src, const QString& force = QString());
+    void read_filters();
+    void write_filters();
+    void show_filters(QTreeWidget *treewidget, QList<filters_struct> values);
+    void save_checked(QTreeWidget *treewidget);
 
 public slots:
     void add_filter();

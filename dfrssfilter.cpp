@@ -6,12 +6,14 @@
 #include <QtNetwork>
 #include <QString>
 
+#include "settings.h"
 #include "filter.h"
-
 #include "feeds_settings.h"
 
 
 
+Filter *new_filter = nullptr;
+feeds_settings *f_sett = nullptr;
 // обработчик событий
 bool DFRSSFilter::eventFilter(QObject *obj, QEvent *event)
 {
@@ -80,10 +82,14 @@ void DFRSSFilter::show_hide(QSystemTrayIcon::ActivationReason reason)
  *  источников; кнопка начинает процесс чтения новостей. */
 DFRSSFilter::DFRSSFilter(QWidget *parent) : QWidget(parent), currentReply(0)
 {
-    read_filters(); // считываем фильтры
-    read_feeds(); // считываем ленты
-    sett = new settings();
+    sett = new settings(this);
     sett->read_settings();
+    new_filter = new Filter(this);
+    new_filter->read_filters(); // считываем фильтры
+    //read_feeds(); // считываем ленты
+    f_sett = new feeds_settings(this);
+    f_sett->read_feeds();
+
     win_max = false; // окно не развёрнуто
 
     fetchButton = new QPushButton(tr("Поиск"), this);
@@ -435,7 +441,7 @@ void DFRSSFilter::error(QNetworkReply::NetworkError)
 // открытие окна работы с фильтрами
 void DFRSSFilter::edit_filters()
 {
-    filter *new_filter = new filter();
+    //filter *new_filter = new filter(this);
     new_filter->setWindowFlags(Qt::WindowStaysOnTopHint | /*Qt::CustomizeWindowHint | */Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
     // задаём параметры - оставаться поверх всех, пользовательские настройки, показать заголовок, показать кнопку закрытия
     // говорят без Qt::CustomizeWindowHint другие флаги не работают, но почему-то всё работает

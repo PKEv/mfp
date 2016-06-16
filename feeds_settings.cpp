@@ -9,13 +9,13 @@
 #include <QFile>
 #include <QTextStream>
 
-#include "settings.h"
-extern settings *sett; // чтобы взять тот, что уже определён в dfrssfilter.cpp
+//#include "settings.h"
+//extern settings *sett; // чтобы взять тот, что уже определён в dfrssfilter.cpp
 
 QList<feeds_struct> feeds;
 
 // функция вывода лент в таблицу
-void show_feeds(QListWidget *listwidget, QList<feeds_struct> values)
+void feeds_settings::show_feeds(QListWidget *listwidget, QList<feeds_struct> values)
 {
     listwidget->clear();
     for (int i = 0; i < values.size(); i++)
@@ -32,12 +32,13 @@ void show_feeds(QListWidget *listwidget, QList<feeds_struct> values)
     }
 }
 
-void read_feeds()
+void feeds_settings::read_feeds()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "feeds.gsd";
     QFile file(name); // создаем объект класса QFile
     if(file.open(QIODevice::ReadOnly |QIODevice::Text)) // если файл открылся и там текст
     {
+        feeds.clear(); // читай в файле про фильтры
         while(!file.atEnd()) // пока не упрёмся в конец файла
         {
             QString str = file.readLine(); // читаем строку
@@ -52,7 +53,7 @@ void read_feeds()
     }
 }
 
-void write_feeds()
+void feeds_settings::write_feeds()
 {
     QString name = qApp->applicationDirPath() + QDir::separator() + "feeds.gsd";
     QFile file(name); // создаем объект класса QFile
@@ -67,7 +68,7 @@ void write_feeds()
 }
 
 // функция запоминания расставленных галочек
-void save_checked(QListWidget *listwidget)
+void feeds_settings::save_checked(QListWidget *listwidget)
 {
     for (int i = 0; i < feeds.size(); i++)
     {
@@ -80,14 +81,14 @@ void save_checked(QListWidget *listwidget)
 }
 
 // функция получения имени ленты
-void get_feed_name()
+void feeds_settings::get_feed_name()
 {
 
 }
 
-feeds_settings::feeds_settings(QWidget *parent) : QDialog(parent), ui(new Ui::feeds_settings)
+feeds_settings::feeds_settings(QWidget *parent) : QDialog(), ui(new Ui::feeds_settings)
 {
-    sett = DFRSSFilter(parent).sett;
+    sett = static_cast<DFRSSFilter*>(parent)->sett;
     lineEdit = new QLineEdit(this);
     lineEdit->setPlaceholderText("Введите адрес ленты...");
 
